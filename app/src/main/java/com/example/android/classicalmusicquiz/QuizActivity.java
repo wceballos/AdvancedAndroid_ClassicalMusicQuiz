@@ -47,7 +47,7 @@ import java.util.ArrayList;
 // TODO (1): Have this Activity implement ExoPlayer.EventListener and add the required methods.
 public class QuizActivity extends AppCompatActivity implements View.OnClickListener {
 
-    private static final int CORRECT_ANSWER_DELAY_MILLIS = 1000;
+    private static final int CORRECT_ANSWER_DELAY_MILLIS = 2000;
     private static final String REMAINING_SONGS_KEY = "remaining_songs";
     private int[] mButtonIDs = {R.id.buttonA, R.id.buttonB, R.id.buttonC, R.id.buttonD};
     private ArrayList<Integer> mRemainingSampleIDs;
@@ -60,11 +60,11 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
     private SimpleExoPlayerView mPlayerView;
 
 
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
-
 
         // Initialize the player view.
         mPlayerView = (SimpleExoPlayerView) findViewById(R.id.playerView);
@@ -101,19 +101,17 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
 
         // Initialize the buttons with the composers names.
         mButtons = initializeButtons(mQuestionSampleIDs);
-        
-        Sample answerSample = Sample.getSampleByID(this, mAnswerSampleID);
 
-        if (answerSample == null) {
-            Toast.makeText(this, getString(R.string.sample_not_found_error),
-                    Toast.LENGTH_SHORT).show();
-            return;
+        // DONE (4): Create a Sample object using the Sample.getSampleByID() method and passing in mAnswerSampleID;
+        Sample sample = Sample.getSampleByID(this, mAnswerSampleID);
+        // DONE (5): Create a method called initializePlayer() that takes a Uri as an argument and call it here, passing in the Sample URI.
+        if (sample == null) {
+            String toastMsg = "Sample not found";
+            Toast.makeText(this, toastMsg, Toast.LENGTH_SHORT).show();
+        } else {
+            initializePlayer(Uri.parse(sample.getUri()));
         }
-
-        // Initialize the player.
-        initializePlayer(Uri.parse(answerSample.getUri()));
     }
-
 
     /**
      * Initializes the button to the correct views, and sets the text to the composers names,
@@ -135,7 +133,6 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
         }
         return buttons;
     }
-
 
     /**
      * Initialize ExoPlayer.
@@ -159,7 +156,6 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
             mExoPlayer.setPlayWhenReady(true);
         }
     }
-
 
     /**
      * Release ExoPlayer.
@@ -216,6 +212,7 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
         handler.postDelayed(new Runnable() {
             @Override
             public void run() {
+                // DONE (9): Stop the playback when you go to the next question.
                 mExoPlayer.stop();
                 Intent nextQuestionIntent = new Intent(QuizActivity.this, QuizActivity.class);
                 nextQuestionIntent.putExtra(REMAINING_SONGS_KEY, mRemainingSampleIDs);
@@ -230,6 +227,7 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
      * show the correct answer.
      */
     private void showCorrectAnswer() {
+        // DONE (10): Change the default artwork in the SimpleExoPlayerView to show the picture of the composer, when the user has answered the question.
         mPlayerView.setDefaultArtwork(Sample.getComposerArtBySampleID(this, mAnswerSampleID));
         for (int i = 0; i < mQuestionSampleIDs.size(); i++) {
             int buttonSampleID = mQuestionSampleIDs.get(i);
@@ -249,7 +247,6 @@ public class QuizActivity extends AppCompatActivity implements View.OnClickListe
             }
         }
     }
-
 
     /**
      * Release the player when the activity is destroyed.
