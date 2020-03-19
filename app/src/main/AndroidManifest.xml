@@ -31,9 +31,9 @@
         </activity>
         <activity android:name=".QuizActivity"
             android:launchMode="singleTop"/>
-        <receiver android:name=".QuizActivity$MediaReceiver">
+        <receiver android:name=".QuizActivity$MyBroadcastReceiver" android:exported="true">
             <intent-filter>
-                <action android:name="android.intent.action.MEDIA_BUTTON" />
+                <action android:name="android.intent.action.MEDIA_BUTTON"/>
             </intent-filter>
         </receiver>
     </application>
